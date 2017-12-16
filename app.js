@@ -11,8 +11,8 @@ var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 
 var client = mqtt.connect('mqtt://localhost', {
-  "username": "iotUser",
-  "password": "H@ck3r1O1"
+  "username": process.env.MQTT_USER,
+  "password": process.env.MQTT_PASS
 })
 
 var index = require('./routes/index');
@@ -22,10 +22,10 @@ var app = express();
 
 var jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: "https://hackers-room.auth0.com/.well-known/jwks.json"
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: "https://hackers-room.auth0.com/.well-known/jwks.json"
   }),
   audience: '127.0.0.1',
   issuer: "https://hackers-room.auth0.com/",
