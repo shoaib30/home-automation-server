@@ -7,6 +7,9 @@ var bodyParser = require('body-parser');
 var mqtt = require('mqtt')
 
 
+var jwt = require('express-jwt');
+var jwks = require('jwks-rsa');
+
 var client = mqtt.connect('mqtt://localhost', {
   "username": "iotUser",
   "password": "H@ck3r1O1"
@@ -16,6 +19,20 @@ var index = require('./routes/index');
 
 var app = express();
 
+
+var jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: "https://hackers-room.auth0.com/.well-known/jwks.json"
+  }),
+  audience: '127.0.0.1',
+  issuer: "https://hackers-room.auth0.com/",
+  algorithms: ['RS256']
+});
+
+app.use(jwtCheck);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
