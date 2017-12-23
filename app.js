@@ -4,16 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mqtt = require('mqtt')
 
 
 var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 
-var client = mqtt.connect('mqtt://localhost', {
-  "username": process.env.MQTT_USER,
-  "password": process.env.MQTT_PASS
-})
 
 var index = require('./routes/index');
 
@@ -22,13 +17,13 @@ var app = express();
 
 var jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: "https://hackers-room.auth0.com/.well-known/jwks.json"
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: process.env.JWKS_URI
   }),
-  audience: '127.0.0.1',
-  issuer: "https://hackers-room.auth0.com/",
+  audience: process.env.JWT_AUDIENCE,
+  issuer: process.env.JWT_ISSUER,
   algorithms: ['RS256']
 });
 
@@ -58,18 +53,16 @@ app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
-  res.end("Error")
+  if(err.status == 401){
+    res.end("Unauthorized");
+  }
+  else if(err.status == 404){
+    res.end("Not Found");
+  }
+  // render the error page
+  res.end("Error");
 });
-
-//connecting to topic
-client.on('connect', function () {
-  client.subscribe('test')
-  console.log("Connected to MQTT BROKER")
-})
-
 
 
 module.exports = app;
