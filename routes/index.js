@@ -28,6 +28,18 @@ router.get('/', passport.authenticate('basic', {
   res.end("Triggered");
 });
 
+/* POST trigger on/off. */
+router.post('/trigger/:state', passport.authenticate('basic', {
+  session: false
+}), function (req, res, next) {
+  var data = req.body;
+  data.state = req.params.state;
+  var mqttTopic = MQTT_TOPIC + "/" + req.user.username + "/" + data.device;
+  console.log(mqttTopic);
+  client.publish(mqttTopic, JSON.stringify(data));
+  res.end("Triggered");
+});
+
 //connecting to topic
 client.on('connect', function () {
   console.log("Connected to MQTT BROKER");
