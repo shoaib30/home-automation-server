@@ -6,28 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 
-var jwt = require('express-jwt');
-var jwks = require('jwks-rsa');
-
 
 var index = require('./routes/index');
 
 var app = express();
 
-
-var jwtCheck = jwt({
-  secret: jwks.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: process.env.JWKS_URI
-  }),
-  audience: process.env.JWT_AUDIENCE,
-  issuer: process.env.JWT_ISSUER,
-  algorithms: ['RS256']
-});
-
-app.use(jwtCheck);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
