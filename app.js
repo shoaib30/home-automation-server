@@ -5,8 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-
-
 var index = require('./routes/index');
 
 var app = express();
@@ -43,6 +41,7 @@ app.use(function (err, req, res, next) {
   else if(err.status == 404){
     res.end("Not Found");
   }
+  console.log(err)
   // render the error page
   res.end("Error");
 });

@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 var mqtt = require('mqtt');
-
+var passportConfig = require('../passport-config');
+var passport = passportConfig.configurePassportStrategy();
 var MQTT_TOPIC = process.env.MQTT_TOPIC;
 var MQTT_ADDR = process.env.MQTT_ADDR;
 var MQTT_PORT = process.env.MQTT_PORT;
@@ -19,10 +20,12 @@ var client = mqtt.connect(MQTT_ADDR, {
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', passport.authenticate('basic', {
+  session: false
+}), function (req, res, next) {
   console.log("Trigger");
   client.publish(MQTT_TOPIC, 'Hello mqtt');
-  res.send("Triggered");
+  res.end("Triggered");
 });
 
 //connecting to topic
@@ -31,4 +34,3 @@ client.on('connect', function () {
 });
 
 module.exports = router;
-
