@@ -41,7 +41,7 @@ app.use(function (err, req, res, next) {
   else if(err.status == 404){
     res.end("Not Found");
   }
-  console.log(err)
+  console.log(err);
   // render the error page
   res.end("Error");
 });

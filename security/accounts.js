@@ -10,4 +10,4 @@ exports.findByUsername = function (username, cb) {
         }
         return cb(null, null);
     });
-}
+};
